@@ -6,17 +6,21 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import { Dropdown } from 'react-native-material-dropdown';
 import  axios  from 'axios';
 import * as f from "firebase";
+
+
 export default class Home extends Component {
     state = {
         filterValue:"All",
         prd: [],
         cat: [],
+        userid:"",
         search: '',
     isLoading: true,
     };
     componentDidMount() {
          const Data = this.props.route.params.data; 
         if(Data !== null){
+          this.setState({userid:Data.id});
       //  alert("welcome");
         }
         else{
@@ -43,15 +47,13 @@ export default class Home extends Component {
             });
           });
         this.props.navigation.setOptions({ 
-        headerRight:()=><TouchableOpacity onPress={ () => this.props.navigation.navigate("Profile",{data:Data.id})}>
+        headerRight:()=><TouchableOpacity onPress={ () => this.props.navigation.navigate("Profile",{id:this.state.userid,data:Data.id})}>
           <Image style = {{width:60, height:60,borderRadius:50, marginRight:20,}}
          source={{ uri:Data.image}}/></TouchableOpacity>,
         headerLeft:()=><Ionicons name="ios-options" size={40} style={{marginLeft:20}} color="black" />});
     }
 
 
-
-prd = [];
  filter = [{ label:"All", value:"All",},
      { label:"below 300", value:300,},
  { label:"below 7000", value:7000,}];
@@ -113,7 +115,7 @@ elevation: 11,
     {
         this.state.cat.map((item)=>{
     return( 
-        <TouchableOpacity onPress={ () => this.props.navigation.navigate("ProductList",{data:item})} >
+        <TouchableOpacity onPress={ () => this.props.navigation.navigate("ProductList",{id:this.state.userid,data:item})} >
         {this.state.isLoading ? (
       <ActivityIndicator style={{ marginTop: 20, padding:20 }} size="large" />
     ) : (
@@ -164,9 +166,9 @@ elevation: 11,
     {
         this.state.prd.map((item)=>{
           
-if(item.price < this.state.filterValue){ 
+if(item.price < this.state.filterValue){
     return(
-        <TouchableOpacity onPress={ () => this.props.navigation.navigate("Product",{data:item})}>
+        <TouchableOpacity onPress={ () => this.props.navigation.navigate("Product",{id:this.state.userid,data:item})}>
         {this.state.isLoading ? (
       <ActivityIndicator style={{ marginTop: 20 }} size="large" />
     ) : (
@@ -186,7 +188,7 @@ if(item.price < this.state.filterValue){
  }
 if(this.state.filterValue == "All"){ 
     return(
-        <TouchableOpacity onPress={ () => this.props.navigation.navigate("Product",{data:item})}>
+        <TouchableOpacity onPress={ () => this.props.navigation.navigate("Product",{id:this.state.userid,data:item})}>
             <View style={{ margin: 20 }}>
             <Image style = {{width:200, height:200,borderRadius:20}} source={{ uri:item.image}}/>
             <View style = {{position:"absolute", padding:6, margin:10, backgroundColor:"#f23f63", borderRadius:50 }}>
@@ -221,8 +223,6 @@ if(this.state.filterValue == "All"){
 
 </View>
 </ScrollView>
-
-
             </ImageBackground>
         );
     }

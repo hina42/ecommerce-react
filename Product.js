@@ -1,20 +1,26 @@
 import React, { Component } from "react";
 import { FontAwesome } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
+import  axios  from 'axios';
 import { Text, View,Image,TouchableOpacity,Dimensions, ImageBackground, TextInput, Button } from "react-native";
 
 export default class Product extends Component {
     state = {
-        Details: {}
+        Details: {},
+        quantity:"",
+        userid:"",
+
     };
     componentDidMount() {
-        const Data = this.props.route.params.data; 
+        const Data = this.props.route.params.data;
+        const id = this.props.route.params.id
+      
         this.props.navigation.setOptions({ title:Data.name,
             headerRight:()=><Ionicons name="ios-cart" size={32} style={{marginRight:20}} color="white" />});
-            
-          //  console.log(Data);
+
           this.setState({
-              Details:Data
+              Details:Data,
+              userid:id
           });
     }
     
@@ -41,7 +47,55 @@ export default class Product extends Component {
              <Text style = {{ fontSize:20,padding:1,fontWeight:"bold",}} > ${this.state.Details.price}</Text>
              <Text style = {{ fontSize:20,padding:1,fontWeight:"bold",}} ><FontAwesome name="star"  color="#ffd000" size = {20}></FontAwesome> {this.state.Details.rating}</Text>
             <Text style = {{ padding:10,fontSize:20,}} >{this.state.Details.desc}</Text>
-            <TouchableOpacity  onPress={ () => this.props.navigation.navigate("Cart",{data:this.state.Details})}
+            <TextInput  
+            keyboardType={'numeric'}
+          placeholder="Quantity"
+          style={{
+            width: "30%",
+            height: 40,
+            borderStyle: "solid",
+            borderWidth: 0.5,
+            borderColor: "black",
+            backgroundColor:"#ffffff",
+            borderRadius: 10,
+            paddingLeft: 10,
+            marginTop: 20,
+            color:'#000000',
+            shadowColor: "#000",
+shadowOffset: {
+	width: 0,
+	height: 5,
+},
+shadowOpacity: 0.36,
+shadowRadius: 6.68,
+
+elevation: 11,
+          }}
+          onChangeText={(val) => {
+            this.setState({
+              quantity: val,
+            });
+          }}
+          value={this.state.password}
+          placeholderTextColor="gray"
+        />
+            <TouchableOpacity  onPress={() => axios.post('http://192.168.0.105:80/crud/api/addcart', {
+          customerid: this.state.userid,
+          quantity: this.state.quantity,
+          amount: this.state.quantity * this.state.Details.price,
+          productid: this.state.Details.id,
+        })
+        .then((res) => {
+            console.log(res.data.status);
+            if(res.data.status == "Success"){
+                this.props.navigation.navigate("Cart",{data:this.state.userid});
+            }
+            else
+            {
+                alert("product already exists in your cart");
+            }
+          })
+}
             style = {{  marginTop:30, height:50, width:"80%", alignSelf:"center", 
             borderRadius:20,
             backgroundColor:"tomato",

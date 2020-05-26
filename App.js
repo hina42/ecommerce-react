@@ -4,15 +4,14 @@ import { View,Text,SafeAreaView,Button,ImageBackground,StatusBar,TouchableOpacit
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import Home from "./Home";
-import About from "./About";
 import Product from "./Product";
 import Signup from "./Signup";
 import Login from "./Login";
 import Profile from "./Profile";
 import Cart from "./Cart";
 import ProductList from "./ProductList";
-import Edit from "./Edit";
 import "./config";
+
 const Stack = createStackNavigator();
 export default class App extends Component {
   render() {
@@ -51,7 +50,9 @@ export default class App extends Component {
   }} name="Profile" component={Profile} />
    <Stack.Screen  name="Cart" component={Cart} />
       </Stack.Navigator>
+
     </NavigationContainer>
+   
     );
 }
 }
